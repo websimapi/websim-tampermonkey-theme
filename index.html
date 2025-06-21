@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSim Theming Assistant - AI-Powered TamperMonkey Script Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .element-tree {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .element {
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .element:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .element-tag {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .element-class {
+            color: #3182ce;
+        }
+
+        .element-description {
+            color: #4a5568;
+            font-style: italic;
+            margin-left: 20px;
+            font-size: 0.8rem;
+        }
+
+        .ai-context {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ai-context h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .ai-context ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .ai-context li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .ai-context li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+
+        .script-generator {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e0;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #4a5568;
+            border-radius: 8px;
+            background: #2d3748;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .code-output {
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #30363d;
+        }
+
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .theme-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-theme { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); }
+        .neon-theme { background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%); }
+        .minimal-theme { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+        .retro-theme { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .code-output:hover .copy-btn {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .themes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .highlight {
+            background: rgba(255, 255, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online { background: #48bb78; }
+        .status-offline { background: #f56565; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 WebSim Theming Assistant</h1>
+            <p>AI-Powered TamperMonkey Script Generator for WebSim Customization</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2>🏗️ WebSim UI Structure Analysis</h2>
+                
+                <div class="ai-context">
+                    <h3>AI Context for WebSim Interface</h3>
+                    <ul>
+                        <li>Navigation sidebar: 64px width, fixed position</li>
+                        <li>Projects panel: 400px width, resizable</li>
+                        <li>Dark/Light theme support via CSS classes</li>
+                        <li>Tailwind CSS framework with custom utilities</li>
+                        <li>React-based components with data attributes</li>
+                    </ul>
+                </div>
+
+                <div class="element-tree">
+                    <div class="element" onclick="highlightElement('nav')">
+                        <span class="element-tag">nav</span>
+                        <span class="element-class">.w-16.h-full.bg-white.dark:bg-[#0f0f0f]</span>
+                        <div class="element-description">Main navigation sidebar</div>
+                    </div>
+                    
+                    <div class="element" onclick="highlightElement('logo')">
+                        <span class="element-tag">  img</span>
+                        <span class="element-class">.w-10.h-10</span>
+                        <div class="element-description">WebSim logo button</div>
+                    </div>
+                    
+                    <div class="element" onclick="highlightElement('notifications')">
+                        <span class="element-tag">  button</span>
+                        <span class="element-class">[aria-label="Notifications"]</span>
+                        <div class="element-description">Notifications with badge count</div>
+                    </div>
+                    
+                    <div class="element" onclick="highlightElement('projects-panel')">
+                        <span class="element-tag">div</span>
+                        <span class="element-class">.w-[400px].h-full</span>
+                        <div class="element-description">Projects sidebar panel</div>
+                    </div>
+                    
+                    <div class="element" onclick="highlightElement('search')">
+                        <span class="element-tag">  input</span>
+                        <span class="element-class">[placeholder="Search projects"]</span>
+                        <div class="element-description">Project search input</div>
+                    </div>
+                    
+                    <div class="element" onclick="highlightElement('tabs')">
+                        <span class="element-tag">  div</span>
+                        <span class="element-class">[role="tablist"]</span>
+                        <div class="element-description">All/Liked/Posted tabs</div>
+                    </div>
+                    
+                    <div class="element" onclick="highlightElement('project-card')">
+                        <span class="element-tag">  a</span>
+                        <span class="element-class">.bg-gray-50.hover:bg-gray-100</span>
+                        <div class="element-description">Individual project cards</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚡ TamperMonkey Script Generator</h2>
+                
+                <div class="script-generator">
+                    <div class="form-group">
+                        <label for="theme-name">Theme Name</label>
+                        <input type="text" id="theme-name" class="form-control" placeholder="e.g., Dark Neon Theme" value="Custom WebSim Theme">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="target-element">Target Element</label>
+                        <select id="target-element" class="form-control">
+                            <option value="sidebar">Navigation Sidebar</option>
+                            <option value="projects-panel">Projects Panel</option>
+                            <option value="project-cards">Project Cards</option>
+                            <option value="search-bar">Search Bar</option>
+                            <option value="global">Global Styles</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customization-type">Customization Type</label>
+                        <select id="customization-type" class="form-control" onchange="updateCustomizationOptions()">
+                            <option value="colors">Color Scheme</option>
+                            <option value="layout">Layout Changes</option>
+                            <option value="animations">Animations</option>
+                            <option value="hiding">Hide Elements</option>
+                            <option value="custom-css">Custom CSS</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="css-code">CSS Modifications</label>
+                        <textarea id="css-code" class="form-control" rows="6" placeholder="Enter your CSS modifications here...">/* Your custom CSS will appear here */</textarea>
+                    </div>
+                    
+                    <button class="btn" onclick="generateScript()">🚀 Generate TamperMonkey Script</button>
+                </div>
+
+                <div class="code-output" id="generated-script" style="display: none;">
+                    <button class="copy-btn" onclick="copyToClipboard()">📋 Copy</button>
+                    <pre id="script-content"></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎭 Pre-built Theme Collection</h2>
+            <p style="margin-bottom: 20px; color: #4a5568;">Click on any theme to generate its TamperMonkey script instantly</p>
+            
+            <div class="themes-grid">
+                <div class="theme-card" onclick="applyTheme('dark')">
+                    <div class="theme-preview dark-theme">
+                        <div style="position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; background: #333; border-radius: 5px;"></div>
+                        <div style="position: absolute; top: 50px; left: 10px; width: 80%; height: 20px; background: #444; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 80px; left: 10px; width: 60%; height: 15px; background: #555; border-radius: 3px;"></div>
+                    </div>
+                    <h3>🌙 Dark Theme</h3>
+                    <p style="color: #666; font-size: 0.9rem;">Elegant dark color scheme with improved contrast</p>
+                </div>
+                
+                <div class="theme-card" onclick="applyTheme('neon')">
+                    <div class="theme-preview neon-theme">
+                        <div style="position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; background: #00ffff; border-radius: 5px; box-shadow: 0 0 10px #00ffff;"></div>
+                        <div style="position: absolute; top: 50px; left: 10px; width: 80%; height: 20px; background: #ff00ff; border-radius: 3px; box-shadow: 0 0 8px #ff00ff;"></div>
+                        <div style="position: absolute; top: 80px; left: 10px; width: 60%; height: 15px; background: #00ff00; border-radius: 3px; box-shadow: 0 0 6px #00ff00;"></div>
+                    </div>
+                    <h3>⚡ Neon Cyber</h3>
+                    <p style="color: #666; font-size: 0.9rem;">Cyberpunk-inspired neon glows and effects</p>
+                </div>
+                
+                <div class="theme-card" onclick="applyTheme('minimal')">
+                    <div class="theme-preview minimal-theme">
+                        <div style="position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; background: #fff; border: 2px solid #ddd; border-radius: 5px;"></div>
+                        <div style="position: absolute; top: 50px; left: 10px; width: 80%; height: 20px; background: #f5f5f5; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 80px; left: 10px; width: 60%; height: 15px; background: #eee; border-radius: 3px;"></div>
+                    </div>
+                    <h3>🤍 Minimal Clean</h3>
+                    <p style="color: #666; font-size: 0.9rem;">Clean, minimal design with maximum focus</p>
+                </div>
+                
+                <div class="theme-card" onclick="applyTheme('retro')">
+                    <div class="theme-preview retro-theme">
+                        <div style="position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; background: #ff6b6b; border-radius: 5px;"></div>
+                        <div style="position: absolute; top: 50px; left: 10px; width: 80%; height: 20px; background: #feca57; border-radius: 3px;"></div>
+                        <div style="position: absolute; top: 80px; left: 10px; width: 60%; height: 15px; background: #ff9ff3; border-radius: 3px;"></div>
+                    </div>
+                    <h3>🌈 Retro Wave</h3>
+                    <p style="color: #666; font-size: 0.9rem;">80s-inspired synthwave aesthetic</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📚 Advanced Customization Guide</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div>
+                    <h3 style="color: #667eea; margin-bottom: 10px;">🎯 Targeting Elements</h3>
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem;">
+                        <div>• Navigation: <span class="highlight">nav.w-16</span></div>
+                        <div>• Projects Panel: <span class="highlight">.w-\\[400px\\]</span></div>
+                        <div>• Search Input: <span class="highlight">[placeholder="Search projects"]</span></div>
+                        <div>• Project Cards: <span class="highlight">.bg-gray-50</span></div>
+                        <div>• Dark Mode: <span class="highlight">.dark\\:bg-\\[\\#0f0f0f\\]</span></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: #667eea; margin-bottom: 10px;">⚡ Performance Tips</h3>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Use CSS transforms for animations</li>
+                        <li>Leverage CSS custom properties for themes</li>
+                        <li>Minimize DOM queries with caching</li>
+                        <li>Use requestAnimationFrame for smooth effects</li>
+                        <li>Apply styles via classes, not inline</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function highlightElement(elementType) {
+            // Remove previous highlights
+            document.querySelectorAll('.element').forEach(el => {
+                el.style.background = '';
+            });
+            
+            // Highlight selected element
+            event.target.closest('.element').style.background = 'rgba(102, 126, 234, 0.2)';
+            
+            // Update CSS code based on selected element
+            updateCssForElement(elementType);
+        }
+
+        function updateCssForElement(elementType) {
+            const cssTextarea = document.getElementById('css-code');
+            const cssExamples = {
+                'nav': `/* Navigation Sidebar Styling */
+nav.w-16 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-right: 2px solid rgba(255,255,255,0.1) !important;
+}
+
+nav.w-16 button {
+    transition: all 0.3s ease !important;
+}
+
+nav.w-16 button:hover {
+    transform: scale(1.1) !important;
+    background: rgba(255,255,255,0.1) !important;
+}`,
+                'logo': `/* Logo Styling */
+nav.w-16 img[alt="WebSim Logo"] {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)) !important;
+    transition: transform 0.3s ease !important;
+}
+
+nav.w-16 img[alt="WebSim Logo"]:hover {
+    transform: rotate(360deg) scale(1.1) !important;
+}`,
+                'projects-panel': `/* Projects Panel Styling */
+div[style*="width:400px"] {
+    background: rgba(0,0,0,0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border-left: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+div[style*="width:400px"] .bg-gray-100 {
+    background: rgba(102, 126, 234, 0.1) !important;
+    border-radius: 12px !important;
+}`,
+                'project-card': `/* Project Cards Styling */
+.bg-gray-50.hover\\:bg-gray-100 {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%) !important;
+    border: 1px solid rgba(102, 126, 234, 0.2) !important;
+    transition: all 0.3s ease !important;
+    transform: translateY(0) !important;
+}
+
+.bg-gray-50.hover\\:bg-gray-100:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 100%) !important;
+}`,
+                'search': `/* Search Bar Styling */
+input[placeholder="Search projects"] {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%) !important;
+    border: 2px solid rgba(102, 126, 234, 0.3) !important;
+    border-radius: 15px !important;
+    transition: all 0.3s ease !important;
+}
+
+input[placeholder="Search projects"]:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    transform: scale(1.02) !important;
+}`
+            };
+            
+            if (cssExamples[elementType]) {
+                cssTextarea.value = cssExamples[elementType];
+            }
+        }
+
+        function updateCustomizationOptions() {
+            const type = document.getElementById('customization-type').value;
+            const cssTextarea = document.getElementById('css-code');
+            
+            const templates = {
+                'colors': `/* Color Scheme Customization */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --accent-color: #f093fb;
+}
+
+/* Apply to navigation */
+nav.w-16 {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+}
+
+/* Apply to project cards */
+.bg-gray-50 {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%) !important;
+    border-left: 3px solid var(--accent-color) !important;
+}`,
+                'layout': `/* Layout Modifications */
+/* Make sidebar wider */
+nav.w-16 {
+    width: 80px !important;
+}
+
+/* Adjust projects panel */
+div[style*="width:400px"] {
+    width: 450px !important;
+}
+
+/* Compact project cards */
+.bg-gray-50.hover\\:bg-gray-100 {
+    margin-bottom: 8px !important;
+    border-radius: 12px !important;
+}
+
+/* Grid layout for project cards */
+.flex.flex-col.gap-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
+}`,
+                'animations': `/* Animation Effects */
+@keyframes slideIn {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Animate navigation */
+nav.w-16 {
+    animation: slideIn 0.5s ease-out !important;
+}
+
+/* Animate project cards */
+.bg-gray-50.hover\\:bg-gray-100 {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.bg-gray-50.hover\\:bg-gray-100:hover {
+    animation: pulse 0.6s ease-in-out !important;
+}
+
+/* Animate buttons */
+nav.w-16 button {
+    transition: all 0.3s ease !important;
+}
+
+nav.w-16 button:hover {
+    transform: scale(1.1) rotate(5deg) !important;
+}`,
+                'hiding': `/* Hide Elements */
+/* Hide notifications badge */
+.rt-Badge {
+    display: none !important;
+}
+
+/* Hide project settings buttons */
+button[aria-label*="settings"] {
+    display: none !important;
+}
+
+/* Hide specific tabs */
+button[id*="trigger-liked"] {
+    display: none !important;
+}
+
+/* Hide project stats */
+.flex.items-center.gap-2 {
+    display: none !important;
+}
+
+/* Simplify project cards */
+.relative > .absolute {
+    display: none !important;
+}`,
+                'custom-css': `/* Custom CSS Template */
+/* Add your custom styles here */
+
+/* Example: Glassmorphism effect */
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 15px !important;
+}
+
+/* Apply to navigation */
+nav.w-16 {
+    @extend .glassmorphism;
+}
+
+/* Apply to projects panel */
+div[style*="width:400px"] {
+    @extend .glassmorphism;
+}
+
+/* Custom hover effects */
+.custom-hover:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    transition: all 0.3s ease !important;
+}`
+            };
+            
+            if (templates[type]) {
+                cssTextarea.value = templates[type];
+            }
+        }
+
+        function generateScript() {
+            const themeName = document.getElementById('theme-name').value;
+            const targetElement = document.getElementById('target-element').value;
+            const customizationType = document.getElementById('customization-type').value;
+            const cssCode = document.getElementById('css-code').value;
+            
+            const script = `// ==UserScript==
+// @name         ${themeName}
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Custom WebSim theme with ${customizationType} modifications for ${targetElement}
+// @author       WebSim Theming Assistant
+// @match        https://websim.com/*
+// @match        https://*.websim.com/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    
+    console.log('🎨 ${themeName} - Loading...');
+    
+    // Create and inject custom styles
+    function injectStyles() {
+        // Remove any existing custom theme
+        const existingStyle = document.getElementById('websim-custom-theme');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+        
+        // Create new style element
+        const style = document.createElement('style');
+        style.id = 'websim-custom-theme';
+        style.type = 'text/css';
+        
+        // CSS styles
+        style.innerHTML = \`
+${cssCode}
+
+/* Additional theme enhancements */
+* {
+    transition: all 0.2s ease !important;
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Apply fade-in to new elements */
+.fade-in {
+    animation: fadeIn 0.3s ease-out !important;
+}
+        \`;
+        
+        // Inject into document
+        (document.head || document.documentElement).appendChild(style);
+        console.log('✅ ${themeName} - Styles injected successfully!');
+    }
+    
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectStyles);
+    } else {
+        injectStyles();
+    }
+    
+    // Re-inject styles when navigating (for SPA)
+    let lastUrl = location.href;
+    new MutationObserver(() => {
+        const url = location.href;
+        if (url !== lastUrl) {
+            lastUrl = url;
+            setTimeout(injectStyles, 100);
+        }
+    }).observe(document, {subtree: true, childList: true});
+    
+    // Add helper functions for dynamic theming
+    window.WebSimTheme = {
+        toggle: function() {
+            const style = document.getElementById('websim-custom-theme');
+            style.disabled = !style.disabled;
+        },
+        
+        updateColor: function(property, color) {
+            document.documentElement.style.setProperty(property, color);
+        },
+        
+        reset: function() {
+            const style = document.getElementById('websim-custom-theme');
+            if (style) style.remove();
+        }
+    };
+    
+    console.log('🚀 ${themeName} - Fully loaded! Use WebSimTheme.toggle() to toggle theme.');
+})();`;
+
+            // Show the generated script
+            document.getElementById('script-content').textContent = script;
+            document.getElementById('generated-script').style.display = 'block';
+            
+            // Scroll to the generated script
+            document.getElementById('generated-script').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+
+        function copyToClipboard() {
+            const scriptContent = document.getElementById('script-content').textContent;
+            navigator.clipboard.writeText(scriptContent).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#48bb78';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'rgba(0,0,0,0.7)';
+                }, 2000);
+            });
+        }
+
+        function applyTheme(themeType) {
+            const themes = {
+                'dark': {
+                    name: 'WebSim Dark Theme',
+                    css: `/* Dark Theme for WebSim */
+:root {
+    --dark-bg: #0f0f0f;
+    --dark-surface: #1a1a1a;
+    --dark-border: #333;
+    --dark-text: #e0e0e0;
+    --dark-accent: #667eea;
+}
+
+/* Global dark theme */
+body {
+    background: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
+}
+
+/* Navigation dark theme */
+nav.w-16 {
+    background: var(--dark-surface) !important;
+    border-right: 1px solid var(--dark-border) !important;
+}
+
+nav.w-16 button {
+    color: var(--dark-text) !important;
+}
+
+nav.w-16 button:hover {
+    background: rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Projects panel dark theme */
+div[style*="width:400px"] {
+    background: var(--dark-surface) !important;
+    border-left: 1px solid var(--dark-border) !important;
+}
+
+/* Project cards dark theme */
+.bg-gray-50,
+.bg-gray-100 {
+    background: var(--dark-surface) !important;
+    border: 1px solid var(--dark-border) !important;
+    color: var(--dark-text) !important;
+}
+
+.bg-gray-50:hover,
+.bg-gray-100:hover {
+    background: #262626 !important;
+    border-color: var(--dark-accent) !important;
+}
+
+/* Input dark theme */
+input[placeholder="Search projects"] {
+    background: var(--dark-surface) !important;
+    border: 1px solid var(--dark-border) !important;
+    color: var(--dark-text) !important;
+}
+
+/* Text colors */
+.text-gray-700,
+.text-gray-600,
+.text-gray-800 {
+    color: var(--dark-text) !important;
+}`
+                },
+                'neon': {
+                    name: 'WebSim Neon Cyber Theme',
+                    css: `/* Neon Cyber Theme for WebSim */
+:root {
+    --neon-bg: #0a0a0a;
+    --neon-surface: #1a1a2e;
+    --neon-cyan: #00ffff;
+    --neon-pink: #ff00ff;
+    --neon-green: #00ff00;
+    --neon-yellow: #ffff00;
+}
+
+@keyframes neonGlow {
+    0%, 100% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor; }
+    50% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+@keyframes neonPulse {
+    0%, 100% { box-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 15px var(--neon-cyan); }
+    50% { box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan); }
+}
+
+/* Global neon theme */
+body {
+    background: var(--neon-bg) !important;
+    color: var(--neon-cyan) !important;
+}
+
+/* Navigation neon theme */
+nav.w-16 {
+    background: var(--neon-surface) !important;
+    border-right: 2px solid var(--neon-cyan) !important;
+    animation: neonPulse 2s infinite !important;
+}
+
+nav.w-16 button {
+    color: var(--neon-green) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+nav.w-16 button:hover {
+    background: rgba(0, 255, 255, 0.1) !important;
+    box-shadow: 0 0 15px var(--neon-cyan) !important;
+    color: var(--neon-cyan) !important;
+    animation: neonGlow 1s infinite !important;
+}
+
+/* Projects panel neon theme */
+div[style*="width:400px"] {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border-left: 2px solid var(--neon-pink) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* Project cards neon theme */
+.bg-gray-50,
+.bg-gray-100 {
+    background: rgba(26, 26, 46, 0.6) !important;
+    border: 1px solid var(--neon-green) !important;
+    color: var(--neon-cyan) !important;
+    border-radius: 10px !important;
+}
+
+.bg-gray-50:hover,
+.bg-gray-100:hover {
+    background: rgba(26, 26, 46, 0.9) !important;
+    border-color: var(--neon-pink) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3) !important;
+    transform: translateY(-3px) !important;
+}
+
+/* Neon text effects */
+h1, h2, h3 {
+    color: var(--neon-cyan) !important;
+    animation: neonGlow 2s infinite !important;
+}
+
+/* Input neon theme */
+input[placeholder="Search projects"] {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 2px solid var(--neon-green) !important;
+    color: var(--neon-cyan) !important;
+    border-radius: 15px !important;
+}
+
+input[placeholder="Search projects"]:focus {
+    border-color: var(--neon-pink) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5) !important;
+}`
+                },
+                'minimal': {
+                    name: 'WebSim Minimal Clean Theme',
+                    css: `/* Minimal Clean Theme for WebSim */
+:root {
+    --minimal-white: #ffffff;
+    --minimal-gray: #f8f9fa;
+    --minimal-border: #e9ecef;
+    --minimal-text: #495057;
+    --minimal-accent: #6c757d;
+}
+
+/* Global minimal theme */
+body {
+    background: var(--minimal-white) !important;
+    color: var(--minimal-text) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Navigation minimal theme */
+nav.w-16 {
+    background: var(--minimal-white) !important;
+    border-right: 1px solid var(--minimal-border) !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05) !important;
+}
+
+nav.w-16 button {
+    color: var(--minimal-accent) !important;
+    border-radius: 6px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+nav.w-16 button:hover {
+    background: var(--minimal-gray) !important;
+    color: var(--minimal-text) !important;
+}
+
+/* Projects panel minimal theme */
+div[style*="width:400px"] {
+    background: var(--minimal-white) !important;
+    border-left: 1px solid var(--minimal-border) !important;
+}
+
+/* Project cards minimal theme */
+.bg-gray-50,
+.bg-gray-100 {
+    background: var(--minimal-white) !important;
+    border: 1px solid var(--minimal-border) !important;
+    border-radius: 8px !important;
+    color: var(--minimal-text) !important;
+    margin-bottom: 1px !important;
+}
+
+.bg-gray-50:hover,
+.bg-gray-100:hover {
+    background: var(--minimal-gray) !important;
+    border-color: var(--minimal-accent) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* Remove unnecessary visual elements */
+.rt-Badge,
+button[aria-label*="settings"] {
+    opacity: 0.7 !important;
+}
+
+/* Clean typography */
+h1, h2, h3 {
+    color: var(--minimal-text) !important;
+    font-weight: 500 !important;
+}
+
+/* Input minimal theme */
+input[placeholder="Search projects"] {
+    background: var(--minimal-gray) !important;
+    border: 1px solid var(--minimal-border) !important;
+    color: var(--minimal-text) !important;
+    border-radius: 6px !important;
+}
+
+input[placeholder="Search projects"]:focus {
+    border-color: var(--minimal-accent) !important;
+    box-shadow: 0 0 0 2px rgba(108, 117, 125, 0.2) !important;
+}`
+                },
+                'retro': {
+                    name: 'WebSim Retro Wave Theme',
+                    css: `/* Retro Wave Theme for WebSim */
+:root {
+    --retro-bg: #1a1a2e;
+    --retro-surface: #16213e;
+    --retro-pink: #ff6b6b;
+    --retro-yellow: #feca57;
+    --retro-purple: #ff9ff3;
+    --retro-blue: #54a0ff;
+}
+
+@keyframes retroGlow {
+    0%, 100% { 
+        text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor, 0 0 20px currentColor;
+        transform: scale(1);
+    }
+    50% { 
+        text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes retroScan {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 20px; }
+}
+
+/* Global retro theme */
+body {
+    background: linear-gradient(135deg, var(--retro-bg) 0%, var(--retro-surface) 100%) !important;
+    color: var(--retro-pink) !important;
+    position: relative !important;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 107, 107, 0.03) 50%, transparent 100%);
+    background-size: 20px 20px;
+    animation: retroScan 2s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Navigation retro theme */
+nav.w-16 {
+    background: linear-gradient(135deg, var(--retro-surface) 0%, var(--retro-bg) 100%) !important;
+    border-right: 2px solid var(--retro-pink) !important;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3) !important;
+    z-index: 2 !important;
+    position: relative !important;
+}
+
+nav.w-16 button {
+    color: var(--retro-yellow) !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+nav.w-16 button:hover {
+    background: rgba(255, 107, 107, 0.2) !important;
+    color: var(--retro-pink) !important;
+    animation: retroGlow 1s infinite !important;
+    box-shadow: 0 0 15px var(--retro-pink) !important;
+}
+
+/* Projects panel retro theme */
+div[style*="width:400px"] {
+    background: rgba(22, 33, 62, 0.9) !important;
+    border-left: 2px solid var(--retro-purple) !important;
+    backdrop-filter: blur(10px) !important;
+    z-index: 2 !important;
+    position: relative !important;
+}
+
+/* Project cards retro theme */
+.bg-gray-50,
+.bg-gray-100 {
+    background: linear-gradient(135deg, rgba(22, 33, 62, 0.8) 0%, rgba(26, 26, 46, 0.8) 100%) !important;
+    border: 1px solid var(--retro-blue) !important;
+    color: var(--retro-yellow) !important;
+    border-radius: 12px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.bg-gray-50::before,
+.bg-gray-100::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.bg-gray-50:hover::before,
+.bg-gray-100:hover::before {
+    left: 100%;
+}
+
+.bg-gray-50:hover,
+.bg-gray-100:hover {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 159, 243, 0.2) 100%) !important;
+    border-color: var(--retro-pink) !important;
+    color: var(--retro-pink) !important;
+    transform: translateY(-5px) scale(1.02) !important;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3) !important;
+}
+
+/* Retro text effects */
+h1, h2, h3 {
+    color: var(--retro-pink) !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    animation: retroGlow 3s infinite !important;
+}
+
+/* Input retro theme */
+input[placeholder="Search projects"] {
+    background: rgba(22, 33, 62, 0.8) !important;
+    border: 2px solid var(--retro-yellow) !important;
+    color: var(--retro-pink) !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+}
+
+input[placeholder="Search projects"]:focus {
+    border-color: var(--retro-pink) !important;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5) !important;
+    animation: retroGlow 1s infinite !important;
+}`
+                }
+            };
+            
+            const theme = themes[themeType];
+            if (theme) {
+                document.getElementById('theme-name').value = theme.name;
+                document.getElementById('css-code').value = theme.css;
+                generateScript();
+            }
+        }
+
+        // Initialize with default example
+        window.addEventListener('load', () => {
+            updateCustomizationOptions();
+        });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
